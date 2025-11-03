@@ -1,12 +1,6 @@
 package com.student.project;
 
 import java.util.Date;
-
-/**
- *
- * @author quoca
- */
-
 public class Student {
 
     private int id;
