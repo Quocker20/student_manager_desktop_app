@@ -1,0 +1,12 @@
+# Compiled Java class files
+*.class
+
+# VS Code settings
+.vscode/
+
+# Maven/Gradle build output
+target/
+build/
+
+# Log files
+*.log

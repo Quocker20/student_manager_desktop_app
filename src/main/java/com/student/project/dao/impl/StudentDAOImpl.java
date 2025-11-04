@@ -14,7 +14,7 @@ import java.util.List; // Tạm thời import dù chưa dùng
  * Đây là lớp triển khai (implementation) của StudentDAO.
  * Nơi này chứa code JDBC "bài bản" để thao tác với CSDL MySQL.
  */
-// LỖI #1: Phải "implements StudentDAO"
+
 public class StudentDAOImpl implements StudentDAO {
 
     /**
@@ -23,7 +23,7 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public void addStudent(Student student) {
         Connection conn = DatabaseConnection.getConnection();
-        
+
         // LỖI #3: Tên cột phải là 'dateOfBirth' (khớp với CSDL đã tạo)
         String sql = "INSERT INTO students (name, email, dateOfBirth) VALUES (?, ?, ?)";
 
@@ -31,9 +31,9 @@ public class StudentDAOImpl implements StudentDAO {
         try {
             pstm = conn.prepareStatement(sql);
 
-            pstm.setString(1, student.getName()); 
+            pstm.setString(1, student.getName());
             pstm.setString(2, student.getEmail());
-            
+
             // Xử lý nếu dateOfBirth là null (để tránh NullPointerException)
             if (student.getDateOfBirth() != null) {
                 pstm.setDate(3, new Date(student.getDateOfBirth().getTime()));
@@ -41,12 +41,12 @@ public class StudentDAOImpl implements StudentDAO {
                 pstm.setNull(3, java.sql.Types.DATE);
             }
 
-            pstm.executeUpdate(); 
-            System.out.println("Thêm sinh viên thành công!"); 
+            pstm.executeUpdate();
+            System.out.println("Thêm sinh viên thành công!");
 
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Thêm sinh viên thất bại!"); 
+            System.out.println("Thêm sinh viên thất bại!");
         } finally {
             try {
                 if (pstm != null) {
@@ -58,13 +58,11 @@ public class StudentDAOImpl implements StudentDAO {
         }
     }
 
-    // --- LỖI #2: Thêm các phương thức còn lại ---
-    
     @Override
     public List<Student> getAllStudents() {
         // TODO: Sẽ triển khai ở Tuần 3
         System.out.println("Chức năng getAllStudents chưa được triển khai.");
-        return null; 
+        return null;
     }
 
     @Override
