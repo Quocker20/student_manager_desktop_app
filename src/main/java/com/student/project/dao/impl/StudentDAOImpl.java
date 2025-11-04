@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Date; // QUAN TRỌNG: Dùng java.sql.Date cho CSDL
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List; // Tạm thời import dù chưa dùng
 
 /**
@@ -49,9 +51,8 @@ public class StudentDAOImpl implements StudentDAO {
             System.out.println("Thêm sinh viên thất bại!");
         } finally {
             try {
-                if (pstm != null) {
+                if (pstm != null)
                     pstm.close();
-                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -60,27 +61,137 @@ public class StudentDAOImpl implements StudentDAO {
 
     @Override
     public List<Student> getAllStudents() {
-        // TODO: Sẽ triển khai ở Tuần 3
-        System.out.println("Chức năng getAllStudents chưa được triển khai.");
-        return null;
+        List<Student> studentList = new ArrayList<>();
+
+        Connection conn = DatabaseConnection.getConnection();
+        String sql = "SELECT * FROM students";
+
+        PreparedStatement pstm = null;
+        ResultSet rs = null;
+
+        try {
+            pstm = conn.prepareStatement(sql);
+            rs = pstm.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                Date dateOfBirth = rs.getDate("dateOfBirth");
+
+                Student student = new Student(id, name, email, dateOfBirth);
+                studentList.add(student);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (pstm != null)
+                    pstm.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return studentList;
     }
 
     @Override
     public Student getStudentById(int id) {
-        // TODO: Sẽ triển khai ở Tuần 3
-        System.out.println("Chức năng getStudentById chưa được triển khai.");
-        return null;
+        Student student = null;
+        Connection conn = DatabaseConnection.getConnection();
+        String sql = "SELECT * FROM students WHERE id = ?";
+
+        PreparedStatement pstm = null;
+        ResultSet rs = null;
+
+        try {
+            pstm = conn.prepareStatement(sql);
+            pstm.setInt(1, id);
+
+            rs = pstm.executeQuery();
+
+            if (rs.next()) {
+                int studentId = rs.getInt("id");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                Date dateOfBirth = rs.getDate("dateOfBirth");
+
+                student = new Student(studentId, name, email, dateOfBirth);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (pstm != null)
+                    pstm.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return student;
     }
 
     @Override
     public void updateStudent(Student student) {
-        // TODO: Sẽ triển khai ở Tuần 3
-        System.out.println("Chức năng updateStudent chưa được triển khai.");
+        Connection conn = DatabaseConnection.getConnection();
+        String sql = "UPDATE students SET name = ?, email = ?, dateOfBirth = ? WHERE id = ?";
+        PreparedStatement pstm = null;
+
+        try {
+            pstm = conn.prepareStatement(sql);
+            pstm.setString(1, student.getName());
+            pstm.setString(2, student.getEmail());
+            if (student.getDateOfBirth() != null) {
+                pstm.setDate(3, new Date(student.getDateOfBirth().getTime()));
+            } else {
+                pstm.setNull(3, java.sql.Types.DATE);
+            }
+            pstm.setInt(4, student.getId());
+
+            pstm.executeUpdate();
+            System.out.println("Cập nhật sinh viên thành công!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Cập nhật sinh viên thất bại!");
+        } finally {
+            try {
+                if (pstm != null)
+                    pstm.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void deleteStudent(int id) {
-        // TODO: Sẽ triển khai ở Tuần 3
-        System.out.println("Chức năng deleteStudent chưa được triển khai.");
+        Connection conn = DatabaseConnection.getConnection();
+        String sql = "DELETE FROM students WHERE id = ?";
+
+        PreparedStatement pstm = null;
+
+        try {
+            pstm = conn.prepareStatement(sql);
+            pstm.setInt(1, id);
+
+            pstm.executeUpdate();
+            System.out.println("Xóa sinh viên thành công!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Xóa sinh viên thất bại!");
+        } finally {
+            try {
+                if (pstm != null)
+                    pstm.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
